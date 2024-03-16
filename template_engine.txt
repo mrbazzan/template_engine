@@ -1,0 +1,67 @@
+
+    TEMPLATE ENGINE
+
+  "Template engines allows us to parse and generate data
+   from logic embedded in text"
+                       ~ Baz
+
+  "The job of a template engine is to interpret the
+   template, replacing the dynamic pieces with real
+   data"
+
+Programming languages are used to solve problems
+involving a lot of logic and little literal text
+(textual data) while template engines are suited for
+text-heavy problems. They usually involve a little
+bit of logic, and a great deal of textual data.
+
+  Why do we need template engine?
+
+In web application, we generate HTML pages to be served
+(by the web server - how do we create a web server?) to
+the browser. These HTML pages are a combination of large
+pieces of textual data and dynamic data.
+
+We need a medium to generate the string
+containing the mix of the two (static text and dynamic
+data).
+
+One way this can be done is to have the static text as
+string constants in the application code, and then
+introduce the dynamic data by using string substitution.
+Check **toy.py**.
+Some of the problems this poses are:
+
+    - Frontend and Backend code mixed together so the
+      frontend has to edit backend code to make HTML
+      changes
+
+    - It would blow-up if multiple pages were involved.
+
+    - It makes the logic hard to see. Increasing cognitive
+      load.
+
+The better way to produce HTML pages is with
+templates. The file is mostly static HTML with the
+dynamic pieces embedded using special notation.
+Check **TOY.html**
+
+Comparing **toy.py** and **TOY.html**, the former is
+mostly Python code, with HTML embedded in it while the
+latter is logic embedded in HTML.
+
+String formatting functions are examples of
+mini-languages that revolves around string literal
+text and little dynamic part.
+
+    "foo = {foo}".format(foo=7)
+               |
+            foo = 7
+
+Templates extends the idea of string formatting to
+include constructs like conditionals and loops.
+
+To use (HTML) templates in our programs, we need
+TEMPLATE ENGINE: a sytem that inputs dynamic data into
+static text describing the structure of the page
+

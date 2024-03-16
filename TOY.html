@@ -1,0 +1,8 @@
+
+<p> Welcome, $$name$$! </p>
+<p> Products:</p>
+<ul>
+$! for product in products !$
+    <li> $$product.name | lower$$: $$$product.price$$</li>
+$! endfor !$
+</ul>
