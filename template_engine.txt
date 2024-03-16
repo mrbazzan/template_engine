@@ -65,3 +65,39 @@ To use (HTML) templates in our programs, we need
 TEMPLATE ENGINE: a sytem that inputs dynamic data into
 static text describing the structure of the page
 
+
+    IMPLEMENTATION APPROACH
+
+- parsing the template and
+- rendering the template
+      - managing the dynamic context (source of data)
+      - executing the logic elements
+      - implementing dot access and filter execution
+
+
+MODELS OF IMPLEMENTATION
+    parsing phase ----------> rendering phase
+
+Interpretation model
+    parsing: involves creating a data structure which
+             represents the structure of the template
+    rendering: walking down the data structure and
+               assembling the result text based on the
+               instructions found.
+    prefereable to use if the templates will be used a
+    few times each.
+    example of real-world example: Django template engine.
+
+Compilation model
+    parsing: generates directly executable code
+    renderinng: executing the code produces result.
+    example of real-world example: Jinja2 and Mako.
+
+******************************************************
+** In this template engine, compilation is used:    **
+** templates are compiled to Python code which      **
+** produce the result when run.                     **
+**                                                  **
+** This is an example of technique called:          **
+** CODE GENERATION                                  **
+******************************************************
