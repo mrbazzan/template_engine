@@ -101,3 +101,12 @@ Compilation model
 ** This is an example of technique called:          **
 ** CODE GENERATION                                  **
 ******************************************************
+
+
+    COMPILING TO PYTHON
+
+The parsing phase will convert a template into a Python
+function. Each template is converted into a
+**render_function**.
+   The template in *TOY.html* get converted to the function
+   in **render_toy.html**
