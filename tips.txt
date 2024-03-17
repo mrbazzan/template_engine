@@ -1,0 +1,47 @@
+
+Python tips from "Compiling to Python"
+
+- local names are faster for repeated use.
+    variable names in Python can be:
+      - local to a functionn
+      - global to a module
+      - builtin Python
+    names that are 'local to a function' are faster
+    to access than builtins.
+
+Hence,
+
+```python3
+
+def func():
+    print(str(3))
+
+    to_str = str
+    print(to_str(3)) # faster
+```
+
+- one of the best way of creating strings is from a
+  list of strings, and then joining them.
+
+- calling a method on an object is executed in two
+  steps e.g
+
+```python3
+result = []
+result.append("hello")
+result.append("dude")
+```
+  i. **append** is fetched from the **result** object
+  ii. the value fetched is invoked as a function by
+      passing "hello" as its argument.
+
+  An optimization principle to shave off the time required
+  by the first step is:
+
+```python3
+result = []
+result_append = result.append
+
+result_append("hello")
+result_append("dude")
+```
