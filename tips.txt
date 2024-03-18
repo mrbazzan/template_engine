@@ -1,7 +1,7 @@
 
 Python tips from "Compiling to Python"
 
-- local names are faster for repeated use.
+1. local names are faster for repeated use.
     variable names in Python can be:
       - local to a functionn
       - global to a module
@@ -20,10 +20,10 @@ def func():
     print(to_str(3)) # faster
 ```
 
-- one of the best way of creating strings is from a
+2. one of the best way of creating strings is from a
   list of strings, and then joining them.
 
-- calling a method on an object is executed in two
+3. calling a method on an object is executed in two
   steps e.g
 
 ```python3
