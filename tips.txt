@@ -45,3 +45,43 @@ result_append = result.append
 result_append("hello")
 result_append("dude")
 ```
+
+4. **exec** is a Python builtin function. Here is how it
+   works:
+
+```python3
+
+python_source = """\
+SEVENTEEN = 17
+
+def three():
+    return 3
+
+"""
+
+global_namespace = {}
+exec(python_source, global_namespace)
+
+# global_namespace["SEVENTEEN"] return 17
+
+```
+
+5. Argument unpacking
+
+   `*contexts` argument in the function below denotes that
+   all postional arguments will be packed into a tuple and
+   passed in as `contexts`.
+
+```python3
+
+def template(text, *contexts):
+    context = {}
+    for c in contexts:
+        context.update(c)
+    return context
+
+t = template("dude")
+t = template("dude", {"lower":str.lower})
+t = template("dude", {"lower":str.lower}, {"upper":str.upper})
+
+```
