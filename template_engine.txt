@@ -110,3 +110,24 @@ function. Each template is converted into a
 **render_function**.
    The template in *TOY.html* get converted to the function
    in **render_toy.html**
+
+
+    WRITING THE ENGINE
+
+The heart of the engine is the Template class, and the
+bulk of the work in the engine is parsing the template and
+producing the necessary Python code. A helper class,
+CodeBuilder, handles the management as the Python code is
+being constructed.
+
+CodeBuilder keeps a list of strings that will be the final
+Python code, and embedded within it are methods to run the
+code. Some of what it does are:
+    - keeping track of each line of code that forms the
+      desired Python code. A line of code could be
+      another CodeBuilder object.
+    - managing indentation
+The gem lies in the fact that it is oblivious of what is
+contained in the Template class. It works without knowing
+any implementation detail of the proposed "template".
+This shows a clear seperation of concern.
