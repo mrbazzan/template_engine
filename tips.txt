@@ -85,3 +85,38 @@ t = template("dude", {"lower":str.lower})
 t = template("dude", {"lower":str.lower}, {"upper":str.upper})
 
 ```
+
+6. Closure
+
+   These are functions that refer to variables outside of
+   theirself. Consider:
+
+```python3
+class CodeBuilder:
+    def __init__(self):
+        self.code = []
+
+    def add(self, line):
+        self.code.append(line+'\n')
+
+
+code = CodeBuilder()
+buf = []
+def flush_output():
+    if len(buf) == 1:
+        code.add("single(%s)" % buf[0])
+    elif len(buf) > 1:
+        code.add("multiple(%s)" % ",".join(buf))
+    del buf[:]  # delete the contents of :buf:
+```
+
+:func flush_output: is a closure as it accesses :buf:
+and :code: which are defined outside its body.
+
+The similitude of the code above is a micro-optimization
+logic used in the code generation phase of a template
+engine design.
+
+Strings are added to :buf: and the
+:func flush_output: will make an appropriate decision
+based on the length of :buf: when it is called.
