@@ -131,3 +131,26 @@ The gem lies in the fact that it is oblivious of what is
 contained in the Template class. It works without knowing
 any implementation detail of the proposed "template".
 This shows a clear seperation of concern.
+
+The Template class uses the CodeBuilder's methods
+to sequentially generate the final Python code from the
+input template.
+
+Early on, a closure function that buffers output string (
+strings that should be contained in the final Python code)
+is defined. It, the closure function, is used to perform a
+micro-optimization by keeping track of a buffer list,
+and based on the length of the list, it either
+makes a list append or extend call in the compiled Python code.
+
+The parsing begins by splitting the template text into
+a number of tokens using regular expression. The text is split
+along the tags: comment, variable and control. The tokens are
+then looped over and each piece of token goes through its
+specific process.
+
+Parsing of control structures is to make sure the nesting
+is done properly by pushing to a stack when a control
+statement is encountered and poping from it when the end of
+the control statement is reached, taking care of the
+encountered variables along the way.
