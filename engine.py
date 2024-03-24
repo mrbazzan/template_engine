@@ -1,4 +1,7 @@
 
+import re
+import sys
+
 class CodeBuilder:
 
     INDENT_STEPS = 4
@@ -31,3 +34,72 @@ class Template:
         self.content = {}
         for context in contexts:
             self.content.update(context)
+
+        code = CodeBuilder()
+        code.add_line("def render_function(context, do_dots):")
+        code.indent()
+
+        code.add_line("result = []")
+        code.add_line("append_result = result.append")
+        code.add_line("extend_result = result.extend")
+        code.add_line("to_str = str")
+
+        # buffer output strings
+        buf = []
+        def flush_buf_into_code():
+            if len(buf) == 1:
+                code.add_line("append_result(%s)" % buf[0])
+            elif len(buf) > 1:
+                code.add_line("extend_result([%s])" % ", ".join(buf))
+            del buf[:]   # buf.clear()
+
+        # parse control structure
+        tokens = re.split(r"(?s)(\$\$.*?\$\$|\$\!.*?\!\$|\$\#.*?\#\$)", text)
+        for token in tokens:
+            if token.startswith("$#"):  # comment line
+                continue
+
+            elif token.startswith("$$"):  # variable expression
+                var = token[2:-2].strip()
+                buf.append("to_str(%s)" % var)
+
+            elif token.startswith("$!"):  # tag
+                flush_buf_into_code()
+
+                words = token[2:-2].strip().split()
+                if words[0] == "if":  # if tag
+                    if len(words) != 2:
+                        print("if error")
+                        sys.exit()
+                    code.add_line(
+                        "if c_%s:" % (words[1])
+                    )
+                    code.indent()
+
+                elif words[0] == "for":  # for tag
+                    if len(words) != 4 or words[2] != "in":
+                        print("for error")
+                        sys.exit()
+                    code.add_line(
+                        "for c_%s in %s:" % (
+                            words[1],
+                            words[3]
+                        )
+                    )
+                    code.indent()
+
+                elif words[0].startswith("end"):  # end tag
+                    code.dedent()
+
+                else:
+                    print("unknown statement")
+                    sys.exit()
+
+            else:
+                if token:  # ignore empty literal created by regex
+                    buf.append(repr(token))
+
+        flush_buf_into_code()
+
+        code.add_line("return ''.join(result)")
+        code.dedent()
