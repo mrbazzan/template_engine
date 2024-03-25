@@ -65,7 +65,7 @@ class Template:
                 continue
 
             elif token.startswith("$$"):  # variable expression
-                var = token[2:-2].strip()
+                var = self._expr_code(token[2:-2].strip())
                 buf.append("to_str(%s)" % var)
 
             elif token.startswith("$!"):  # tag
@@ -80,7 +80,7 @@ class Template:
                         )
                     ops_stack.append("if")
                     code.add_line(
-                        "if c_%s:" % (words[1])
+                        "if %s:" % self._expr_code(words[1])
                     )
                     code.indent()
 
@@ -94,7 +94,7 @@ class Template:
                     code.add_line(
                         "for c_%s in %s:" % (
                             words[1],
-                            words[3]
+                            self._expr_code(words[3])
                         )
                     )
                     code.indent()
@@ -132,3 +132,28 @@ class Template:
 
     def _syntax_error(self, msg, cause):
         raise TemplateSyntaxError("%s: %r" % (msg, cause))
+
+    def _expr_code(self, expr):
+        """
+        topic.status.local|upper ->
+              c_upper(do_dots(do_dots(c_topic, "status"), "local"))
+        """
+        code = ""
+        if '|' in expr:
+            l, _, r = expr.rpartition('|')
+            code += "c_%s(%s)" % (
+                r,
+                self._expr_code(l.strip())
+            )
+
+        elif '.' in expr:
+            l, _, r = expr.rpartition('.')
+            code += 'do_dots(%s, "%s")' % (
+                self._expr_code(l),
+                r
+            )
+
+        else:
+            code += "c_%s" % expr
+
+        return code
