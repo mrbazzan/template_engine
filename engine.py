@@ -26,6 +26,16 @@ class CodeBuilder:
         self.code.append(section)
         return section
 
+    def get_globals(self):
+        _globals = {}
+
+        source = str(self)
+        # execute the source string in the context of _globals.
+        # it also stores global variables into _globals
+        exec(source, _globals)
+
+        return _globals
+
     def __str__(self):
         return "".join(str(c) for c in self.code)
 
