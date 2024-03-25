@@ -42,6 +42,9 @@ class Template:
         code.add_line("def render_function(context, do_dots):")
         code.indent()
 
+        self.all_vars = set()  # all variables in the function
+        self.loop_vars = set()  # variables defined in the loops
+
         code.add_line("result = []")
         code.add_line("append_result = result.append")
         code.add_line("extend_result = result.extend")
@@ -97,6 +100,7 @@ class Template:
                             self._expr_code(words[3])
                         )
                     )
+                    self._variable(words[1], self.loop_vars)
                     code.indent()
 
                 elif words[0].startswith("end"):  # end tag
@@ -133,6 +137,13 @@ class Template:
     def _syntax_error(self, msg, cause):
         raise TemplateSyntaxError("%s: %r" % (msg, cause))
 
+    def _variable(self, var, container_set):
+        """
+        Store :var: inside :container_set:
+        """
+
+        container_set.add(var)
+
     def _expr_code(self, expr):
         """
         topic.status.local|upper ->
@@ -145,6 +156,7 @@ class Template:
                 r,
                 self._expr_code(l.strip())
             )
+            self._variable(r, self.all_vars)
 
         elif '.' in expr:
             l, _, r = expr.rpartition('.')
@@ -155,5 +167,6 @@ class Template:
 
         else:
             code += "c_%s" % expr
+            self._variable(expr, self.all_vars)
 
         return code
