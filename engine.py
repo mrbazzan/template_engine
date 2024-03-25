@@ -1,6 +1,9 @@
 
 import re
-import sys
+
+class TemplateSyntaxError(Exception):
+    pass
+
 
 class CodeBuilder:
 
@@ -69,8 +72,10 @@ class Template:
                 words = token[2:-2].strip().split()
                 if words[0] == "if":  # if tag
                     if len(words) != 2:
-                        print("if error")
-                        sys.exit()
+                        self._syntax_error(
+                            "error in the use of 'if' tag",
+                            words
+                        )
                     code.add_line(
                         "if c_%s:" % (words[1])
                     )
@@ -78,8 +83,10 @@ class Template:
 
                 elif words[0] == "for":  # for tag
                     if len(words) != 4 or words[2] != "in":
-                        print("for error")
-                        sys.exit()
+                        self._syntax_error(
+                            "error in the use of 'for' tag",
+                            words
+                        )
                     code.add_line(
                         "for c_%s in %s:" % (
                             words[1],
@@ -92,8 +99,7 @@ class Template:
                     code.dedent()
 
                 else:
-                    print("unknown statement")
-                    sys.exit()
+                    self._syntax_error("unknown tag", words[0])
 
             else:
                 if token:  # ignore empty literal created by regex
@@ -103,3 +109,6 @@ class Template:
 
         code.add_line("return ''.join(result)")
         code.dedent()
+
+    def _syntax_error(self, msg, cause):
+        raise TemplateSyntaxError("%s: %r" % (msg, cause))
