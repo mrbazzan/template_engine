@@ -8,9 +8,9 @@ class TemplateSyntaxError(Exception):
 class CodeBuilder:
     INDENT_STEPS = 4
 
-    def __init__(self):
+    def __init__(self, indent_level=0):
         self.code = []
-        self.indent_level = 0
+        self.indent_level = indent_level
 
     def add_line(self, line):
         self.code.extend([' '*self.indent_level, line, '\n'])
@@ -21,8 +21,13 @@ class CodeBuilder:
     def dedent(self):
         self.indent_level -= self.INDENT_STEPS
 
+    def section(self):
+        section = CodeBuilder(self.indent_level)
+        self.code.append(section)
+        return section
+
     def __str__(self):
-        return "".join(self.code)
+        return "".join(str(c) for c in self.code)
 
 
 class Template:
