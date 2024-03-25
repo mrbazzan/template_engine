@@ -6,7 +6,6 @@ class TemplateSyntaxError(Exception):
 
 
 class CodeBuilder:
-
     INDENT_STEPS = 4
 
     def __init__(self):
