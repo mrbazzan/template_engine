@@ -57,6 +57,8 @@ class Template:
             del buf[:]   # buf.clear()
 
         # parse control structure
+        ops_stack = []  # keep track of nested tags
+
         tokens = re.split(r"(?s)(\$\$.*?\$\$|\$\!.*?\!\$|\$\#.*?\#\$)", text)
         for token in tokens:
             if token.startswith("$#"):  # comment line
@@ -76,6 +78,7 @@ class Template:
                             "error in the use of 'if' tag",
                             words
                         )
+                    ops_stack.append("if")
                     code.add_line(
                         "if c_%s:" % (words[1])
                     )
@@ -87,6 +90,7 @@ class Template:
                             "error in the use of 'for' tag",
                             words
                         )
+                    ops_stack.append("for")
                     code.add_line(
                         "for c_%s in %s:" % (
                             words[1],
@@ -96,6 +100,19 @@ class Template:
                     code.indent()
 
                 elif words[0].startswith("end"):  # end tag
+                    if len(words) != 1:
+                        self._syntax_error("complex end tag?", token)
+
+                    if not ops_stack:
+                        self._syntax_error("unaccounted for tag", token)
+
+                    actual = words[0][3:]
+                    expected = ops_stack.pop()
+                    if expected != actual:
+                        self._syntax_error(
+                            "improper nesting. Expected end tag for",
+                            expected
+                        )
                     code.dedent()
 
                 else:
@@ -104,6 +121,9 @@ class Template:
             else:
                 if token:  # ignore empty literal created by regex
                     buf.append(repr(token))
+
+        if ops_stack:
+            self._syntax_error("unhandled tag", ops_stack)
 
         flush_buf_into_code()
 
