@@ -46,6 +46,8 @@ class Template:
         code.add_line("def render_function(context, do_dots):")
         code.indent()
 
+        vars_section = code.section()
+
         self.all_vars = set()  # all variables in the function
         self.loop_vars = set()  # variables defined in the loops
 
@@ -134,6 +136,12 @@ class Template:
             self._syntax_error("unhandled tag", ops_stack)
 
         flush_buf_into_code()
+
+        # extract context variables into local names
+        for variable in (self.all_vars - self.loop_vars):
+            vars_section.add_line(
+                "c_%s = context[%r]" % (variable, variable)
+            )
 
         code.add_line("return ''.join(result)")
         code.dedent()
