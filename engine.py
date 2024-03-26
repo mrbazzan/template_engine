@@ -156,6 +156,8 @@ class Template:
         code.add_line("return ''.join(result)")
         code.dedent()
 
+        self._render_function = code.get_globals()["render_function"]
+
     def _syntax_error(self, msg, cause):
         raise TemplateSyntaxError("%s: %r" % (msg, cause))
 
@@ -210,3 +212,8 @@ class Template:
             obj = obj()
 
         return obj
+
+    def render(self, context={}):
+        render_context = dict(self.content)
+        render_context.update(context)
+        return self._render_function(render_context, self._do_dots)
