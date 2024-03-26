@@ -192,3 +192,21 @@ class Template:
             self._variable(expr, self.all_vars)
 
         return code
+
+    def _do_dots(self, obj, attr):
+        """
+        Resolve self._do_dots(obj, attr) to one of:
+            obj.attr
+            obj.attr()
+            obj['attr']
+        """
+        try:
+
+            obj = getattr(obj, attr)
+        except AttributeError:
+            obj = obj[attr]
+
+        if callable(obj):
+            obj = obj()
+
+        return obj
